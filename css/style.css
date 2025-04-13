@@ -1,0 +1,596 @@
+/* 画面録画アプリ - Aro Software Group */
+/* スタイルシート - MP4専用版 */
+
+:root {
+    --primary-color: #4361ee;
+    --primary-hover: #3a56d4;
+    --secondary-color: #6c757d;
+    --secondary-hover: #5a6268;
+    --success-color: #2ecc71;
+    --danger-color: #e74c3c;
+    --danger-hover: #c0392b;
+    --light-color: #f8f9fa;
+    --dark-color: #343a40;
+    --bg-color: #ffffff;
+    --text-color: #212529;
+    --border-color: #dee2e6;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --recording-color: #e74c3c;
+    --processing-color: #f39c12;
+    
+    --border-radius: 10px;
+    --transition-speed: 0.3s;
+    --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --hover-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* ダークモード対応 */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --primary-color: #4f6df5;
+        --primary-hover: #3a56d4;
+        --bg-color: #121212;
+        --text-color: #f8f9fa;
+        --border-color: #444;
+        --shadow-color: rgba(0, 0, 0, 0.3);
+    }
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    transition: background-color var(--transition-speed), color var(--transition-speed);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+header .subtitle {
+    font-size: 1.2rem;
+    color: var(--secondary-color);
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.recorder-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background-color: var(--bg-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 20px;
+    transition: box-shadow var(--transition-speed);
+}
+
+.recorder-container:hover {
+    box-shadow: var(--hover-shadow);
+}
+
+.preview-container {
+    position: relative;
+    width: 100%;
+    height: 0;
+    padding-bottom: 56.25%; /* 16:9 アスペクト比 */
+    background-color: #000;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+}
+
+#preview {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+#placeholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    background-color: rgba(0, 0, 0, 0.7);
+    text-align: center;
+    padding: 20px;
+}
+
+#placeholder i {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    color: var(--primary-color);
+    animation: bounce 2s infinite;
+}
+
+.controls {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.settings-panel {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    background-color: rgba(var(--bg-color-rgb), 0.05);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+}
+
+.setting-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.setting-group label {
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+select, input[type="text"] {
+    padding: 12px 15px;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-size: 1rem;
+    transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+}
+
+select:focus, input[type="text"]:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.25);
+}
+
+.toggle-container {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.toggle-container input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-label {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--secondary-color);
+    transition: var(--transition-speed);
+    border-radius: 34px;
+}
+
+.toggle-label:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: var(--transition-speed);
+    border-radius: 50%;
+}
+
+input:checked + .toggle-label {
+    background-color: var(--primary-color);
+}
+
+input:checked + .toggle-label:before {
+    transform: translateX(26px);
+}
+
+.action-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+}
+
+.btn {
+    padding: 14px 28px;
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: background-color var(--transition-speed), transform var(--transition-speed), box-shadow var(--transition-speed);
+    box-shadow: var(--box-shadow);
+    min-width: 200px;
+}
+
+.btn:hover:not(:disabled) {
+    box-shadow: var(--hover-shadow);
+    transform: translateY(-3px);
+}
+
+.btn:active:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: var(--box-shadow);
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn.primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.btn.primary:hover:not(:disabled) {
+    background-color: var(--primary-hover);
+}
+
+.btn.secondary {
+    background-color: var(--secondary-color);
+    color: white;
+}
+
+.btn.secondary:hover:not(:disabled) {
+    background-color: var(--secondary-hover);
+}
+
+.btn.danger {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+.btn.danger:hover:not(:disabled) {
+    background-color: var(--danger-hover);
+}
+
+.recording-info {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    padding: 20px;
+    background-color: rgba(var(--bg-color-rgb), 0.05);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    text-align: center;
+}
+
+#timer {
+    font-size: 2.2rem;
+    font-weight: 700;
+    font-family: monospace;
+    color: var(--primary-color);
+}
+
+#status {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.status-recording {
+    color: var(--recording-color) !important;
+    animation: pulse 1.5s infinite;
+}
+
+.status-error {
+    color: var(--danger-color) !important;
+}
+
+.status-success {
+    color: var(--success-color) !important;
+}
+
+.status-processing {
+    color: var(--processing-color) !important;
+}
+
+.recordings-container {
+    background-color: var(--bg-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 20px;
+    transition: box-shadow var(--transition-speed);
+}
+
+.recordings-container:hover {
+    box-shadow: var(--hover-shadow);
+}
+
+.recordings-container h2 {
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--primary-color);
+}
+
+#recordings-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.recording-item {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 20px;
+    padding: 20px;
+    background-color: rgba(var(--bg-color-rgb), 0.05);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+}
+
+.recording-item:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--hover-shadow);
+}
+
+.recording-preview {
+    width: 100%;
+    position: relative;
+}
+
+.recording-preview video {
+    width: 100%;
+    border-radius: var(--border-radius);
+    background-color: #000;
+}
+
+.enhanced-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    gap: 10px;
+}
+
+.control-btn {
+    padding: 8px 12px;
+    border: none;
+    border-radius: var(--border-radius);
+    background-color: var(--primary-color);
+    color: white;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color var(--transition-speed), transform var(--transition-speed);
+}
+
+.control-btn:hover {
+    background-color: var(--primary-hover);
+    transform: scale(1.05);
+}
+
+.control-btn:active {
+    transform: scale(0.95);
+}
+
+.speed-control {
+    padding: 8px;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+.recording-info h3 {
+    margin-bottom: 10px;
+    color: var(--primary-color);
+    word-break: break-word;
+}
+
+.recording-info p {
+    margin-bottom: 15px;
+    color: var(--secondary-color);
+}
+
+.recording-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.empty-message {
+    text-align: center;
+    padding: 40px;
+    color: var(--secondary-color);
+    font-style: italic;
+    font-size: 1.1rem;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.7);
+    animation: fadeIn 0.3s;
+}
+
+.modal-content {
+    background-color: var(--bg-color);
+    margin: 10% auto;
+    padding: 30px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--hover-shadow);
+    max-width: 600px;
+    width: 90%;
+    animation: slideIn 0.3s;
+}
+
+.close {
+    color: var(--secondary-color);
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color var(--transition-speed);
+}
+
+.close:hover {
+    color: var(--danger-color);
+}
+
+.modal h2 {
+    margin-bottom: 20px;
+    color: var(--primary-color);
+}
+
+.modal ol {
+    margin-left: 20px;
+    margin-bottom: 20px;
+}
+
+.modal li {
+    margin-bottom: 10px;
+}
+
+.modal .note {
+    font-style: italic;
+    color: var(--secondary-color);
+}
+
+footer {
+    margin-top: 50px;
+    text-align: center;
+    padding: 20px;
+    color: var(--secondary-color);
+    border-top: 1px solid var(--border-color);
+}
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+    margin-left: 5px;
+    color: var(--secondary-color);
+    font-size: 0.9em;
+    font-style: italic;
+}
+
+/* 進捗バー */
+.progress-container {
+    width: 100%;
+    background-color: var(--border-color);
+    border-radius: var(--border-radius);
+    margin: 15px 0;
+    overflow: hidden;
+    height: 24px;
+}
+
+.progress-bar {
+    height: 100%;
+    background-color: var(--primary-color);
+    text-align: center;
+    color: white;
+    font-size: 0.9rem;
+    line-height: 24px;
+    transition: width 0.3s ease;
+}
+
+/* レスポンシブデザイン */
+@media (max-width: 768px) {
+    .recording-item {
+        grid-template-columns: 1fr;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+    
+    .btn {
+        width: 100%;
+    }
+    
+    .recording-info {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .settings-panel {
+        grid-template-columns: 1fr;
+    }
+    
+    header h1 {
+        font-size: 2rem;
+    }
+    
+    #timer {
+        font-size: 1.8rem;
+    }
+}
+
+/* アクセシビリティ改善 */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+/* 高コントラストモード対応 */
+@media (forced-colors: active) {
+    .btn {
+        border: 2px solid currentColor;
+    }
+    
+    .toggle-label {
+        border: 2px solid currentColor;
+    }
+}

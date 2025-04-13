@@ -1,0 +1,330 @@
+/* アニメーションとトランジション */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideInUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* 追加のUI改良 */
+.container {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+header h1 {
+    position: relative;
+    display: inline-block;
+}
+
+header h1:after {
+    content: '';
+    position: absolute;
+    width: 50%;
+    height: 3px;
+    background: var(--primary-color);
+    bottom: -10px;
+    left: 25%;
+    border-radius: 2px;
+}
+
+.preview-container {
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.preview-container:hover {
+    border-color: var(--primary-color);
+}
+
+.preview-container.recording {
+    border-color: var(--danger-color);
+    box-shadow: 0 0 15px rgba(220, 53, 69, 0.3);
+}
+
+#placeholder {
+    transition: all 0.3s ease;
+}
+
+#placeholder i {
+    transition: all 0.3s ease;
+}
+
+#placeholder:hover i {
+    transform: scale(1.1);
+    color: var(--primary-color);
+}
+
+.btn {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn:after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.5);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%);
+    transform-origin: 50% 50%;
+}
+
+.btn:focus:not(:active)::after {
+    animation: ripple 1s ease-out;
+}
+
+@keyframes ripple {
+    0% {
+        transform: scale(0, 0);
+        opacity: 0.5;
+    }
+    20% {
+        transform: scale(25, 25);
+        opacity: 0.3;
+    }
+    100% {
+        opacity: 0;
+        transform: scale(40, 40);
+    }
+}
+
+.btn.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
+}
+
+.btn.primary:active {
+    transform: translateY(1px);
+}
+
+.btn.recording {
+    animation: pulse 2s infinite;
+    background-color: var(--danger-color);
+}
+
+.recording-info {
+    transition: all 0.3s ease;
+}
+
+.recording-info.active #timer {
+    color: var(--danger-color);
+    font-size: 1.8rem;
+}
+
+.recording-item {
+    transition: all 0.3s ease;
+    transform: translateY(0);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.recording-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.recording-actions button {
+    transition: all 0.3s ease;
+}
+
+.recording-actions button:hover {
+    transform: translateY(-2px);
+}
+
+/* ダークモードサポート */
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #1a1a1a;
+        color: #f5f5f5;
+    }
+    
+    .recorder-container, .recordings-container, .modal-content {
+        background-color: #2a2a2a;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    }
+    
+    .setting-group select, .toggle-label {
+        background-color: #3a3a3a;
+        color: #f5f5f5;
+        border-color: #444;
+    }
+    
+    .recording-item {
+        border-color: #444;
+        background-color: #2a2a2a;
+    }
+    
+    .empty-message {
+        color: #aaa;
+    }
+    
+    footer {
+        border-top-color: #444;
+        color: #aaa;
+    }
+}
+
+/* ローディングインジケーター */
+.loader {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: var(--primary-color);
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+.preview-container.loading .loader {
+    display: block;
+}
+
+/* ツールチップ */
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip .tooltip-text {
+    visibility: hidden;
+    width: 200px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.tooltip:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* スマートフォン対応の改善 */
+@media (max-width: 576px) {
+    header h1 {
+        font-size: 2rem;
+    }
+    
+    .preview-container {
+        padding-bottom: 75%; /* 4:3のアスペクト比 */
+    }
+    
+    .settings-panel {
+        padding: 10px;
+    }
+    
+    .setting-group {
+        width: 100%;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+    
+    .btn {
+        margin-bottom: 10px;
+    }
+    
+    .recording-info {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    #timer {
+        margin-bottom: 10px;
+    }
+    
+    .modal-content {
+        margin: 20% auto;
+        padding: 15px;
+    }
+}
+
+/* タブレット対応 */
+@media (min-width: 577px) and (max-width: 992px) {
+    .settings-panel {
+        flex-wrap: wrap;
+    }
+    
+    .setting-group {
+        width: 48%;
+        margin-bottom: 10px;
+    }
+    
+    .action-buttons {
+        flex-wrap: wrap;
+    }
+    
+    .btn {
+        flex: 1 0 45%;
+        margin: 5px;
+    }
+}
+
+/* アクセシビリティの改善 */
+.btn:focus, select:focus, input:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* 高コントラストモード対応 */
+@media (forced-colors: active) {
+    .btn, .toggle-label, .recording-item {
+        border: 1px solid ButtonText;
+    }
+}
+
+/* タッチデバイス対応 */
+@media (hover: none) {
+    .btn {
+        padding: 15px 20px; /* より大きなタッチターゲット */
+    }
+    
+    .setting-group select {
+        padding: 12px 15px;
+    }
+    
+    .toggle-label {
+        width: 70px;
+        height: 35px;
+    }
+    
+    .toggle-label:before {
+        height: 27px;
+        width: 27px;
+    }
+}
